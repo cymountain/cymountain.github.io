@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="L6Lm9d5Crl"/>
+  
+  
+  
+  
+  <title>C语言中单向循环链表于循环链表详解 | Blog-Cyan Mountain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="每日一句It’s gonna be ok. 一切都会好的。 内容概要今天如约来更新一下有关于链表的操作。 单向循环链表首先来看看图示：图展示的是一个单向循环链表，他跟以上的单向链表对比只是多了一个指向头结点的 指针，因此，他们的算法几乎是一样的。第一，设计节点。 单向循环链表的节点跟单向链表完全一致。 第二，初始化空链表。 跟单向链表类似，我们既可以初始化一个带有头结点的空循环链表，也可以不要头结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言中单向循环链表于循环链表详解">
+<meta property="og:url" content="http://yoursite.com/2020/07/25/linux02/index.html">
+<meta property="og:site_name" content="Blog-Cyan Mountain">
+<meta property="og:description" content="每日一句It’s gonna be ok. 一切都会好的。 内容概要今天如约来更新一下有关于链表的操作。 单向循环链表首先来看看图示：图展示的是一个单向循环链表，他跟以上的单向链表对比只是多了一个指向头结点的 指针，因此，他们的算法几乎是一样的。第一，设计节点。 单向循环链表的节点跟单向链表完全一致。 第二，初始化空链表。 跟单向链表类似，我们既可以初始化一个带有头结点的空循环链表，也可以不要头结">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://yoursite.com/2020/07/25/linux02/dlianbiao.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/07/25/linux02/jiedian.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/07/25/linux02/slianbiao.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/07/25/linux02/toucha.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/07/25/linux02/weicha.jpg">
+<meta property="og:image" content="http://yoursite.com/2020/07/25/linux02/move.jpg">
+<meta property="article:published_time" content="2020-07-25T12:31:21.000Z">
+<meta property="article:modified_time" content="2020-07-26T02:32:51.530Z">
+<meta property="article:author" content="Cyan Mountain">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2020/07/25/linux02/dlianbiao.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Blog-Cyan Mountain" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/avatar.png" class="js-avatar">
+            
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Cyan Mountain</a></h1>
+        </hgroup>
+        
+        
+            <form>
+                <input type="text" class="st-default-search-input search" id="local-search-input" placeholder="搜索一下" autocomplete="off">
+            </form>
+            <div id="local-search-result"></div>
+        
+        
+            <script type="text/javascript">
+                (function() {
+                    'use strict';
+                    function getMatchData(keyword, data) {
+                        var matchData = [];
+                        for(var i =0;i<data.length;i++){
+                            if(data[i].title.toLowerCase().indexOf(keyword)>=0) 
+                                matchData.push(data[i])
+                        }
+                        return matchData;
+                    }
+                    var $input = $('#local-search-input');
+                    var $resultContent = $('#local-search-result');
+                    $input.keyup(function(){
+                        $.ajax({
+                            url: '/search.json',
+                            dataType: "json",
+                            success: function( json ) {
+                                var str='<ul class=\"search-result-list\">';                
+                                var keyword = $input.val().trim().toLowerCase();
+                                $resultContent.innerHTML = "";
+                                if ($input.val().trim().length <= 0) {
+                                    $resultContent.empty();
+                                    $('#switch-area').show();
+                                    return;
+                                }
+                                var results = getMatchData(keyword, json);
+                                if(results.length === 0){
+                                    $resultContent.empty();
+                                    $('#switch-area').show();
+                                    return;
+                                } 
+                                for(var i =0; i<results.length; i++){
+                                    str += "<li><a href='"+ results[i].url +"' class='search-result-title'>"+ results[i].title +"</a></li>";
+                                }
+                                str += "</ul>";
+                                $resultContent.empty();
+                                $resultContent.append(str);
+                                $('#switch-area').hide();
+                            }
+                        });
+                    });
+                })();
+            </script>
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a  href="/archives/">《杂文》</a></li>
+                        
+                            <li><a  href="/categories/linux/">《记· Linux》</a></li>
+                        
+                            <li><a  href="/categories/android">《记· Android》</a></li>
+                        
+                            <li><a  href="/categories/music">《记· 音乐》</a></li>
+                        
+                            <li><a  href="/about/">《记· myself》</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github"  target="_blank" href="https://github.com/cymountain" title="github">github</a>
+                            
+                                <a class="fl weibo"  target="_blank" href="https://weibo.com/greenweater" title="weibo">weibo</a>
+                            
+                                <a class="fl rss"  target="_blank" href="https://mrookie-hei.github.io/" title="rss">rss</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank"  class="main-nav-link switch-friends-link" href="http://blog.csdn.net/baidu_21483933">csdn</a>
+                    
+                      <a target="_blank"  class="main-nav-link switch-friends-link" href="https://segmentfault.com/blog/maocg_web">segmentfault</a>
+                    
+                      <a target="_blank"  class="main-nav-link switch-friends-link" href="http://www.jianshu.com/users/eb37ef89c746/latest_articles">简书</a>
+                    
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">爱动漫,爱游戏,爱编程,爱运动,爱的太多了!</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Cyan Mountain</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/avatar.png" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Cyan Mountain</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/archives/">《杂文》</a></li>
+                
+                    <li><a href="/categories/linux/">《记· Linux》</a></li>
+                
+                    <li><a href="/categories/android">《记· Android》</a></li>
+                
+                    <li><a href="/categories/music">《记· 音乐》</a></li>
+                
+                    <li><a href="/about/">《记· myself》</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/cymountain" title="github">github</a>
+                    
+                        <a class="weibo" target="_blank" href="https://weibo.com/greenweater" title="weibo">weibo</a>
+                    
+                        <a class="rss" target="_blank" href="https://mrookie-hei.github.io/" title="rss">rss</a>
+                    
+                </div>
+            </nav>
+        </header>
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-linux02" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2020/07/25/linux02/" class="article-date">
+      <time datetime="2020-07-25T12:31:21.000Z" itemprop="datePublished">2020-07-25</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      C语言中单向循环链表于循环链表详解
+    </h1>
+  
+
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="每日一句"><a href="#每日一句" class="headerlink" title="每日一句"></a>每日一句</h3><p>It’s gonna be ok.</p>
+<p>一切都会好的。</p>
+<h2 id="内容概要"><a href="#内容概要" class="headerlink" title="内容概要"></a>内容概要</h2><p>今天如约来更新一下有关于链表的操作。</p>
+<h1 id="单向循环链表"><a href="#单向循环链表" class="headerlink" title="单向循环链表"></a>单向循环链表</h1><p>首先来看看图示：<br><img src="/2020/07/25/linux02/dlianbiao.jpg" alt="单项循环链表"><br>图展示的是一个单向循环链表，他跟以上的单向链表对比只是多了一个指向头结点的 指针，因此，他们的算法几乎是一样的。<br>第一，设计节点。 单向循环链表的节点跟单向链表完全一致。</p>
+<p>第二，初始化空链表。 跟单向链表类似，我们既可以初始化一个带有头结点的空循环链表，也可以不要头结点：<br><img src="/2020/07/25/linux02/jiedian.jpg" alt="单项循环链表"><br>这边把两个步骤放在一起了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">init_list</span><span class="params">(<span class="keyword">void</span>)</span> <span class="comment">// 带有头结点的单循环链表 </span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	linklist head = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(listnode)); </span><br><span class="line">	head-&gt;next = head;</span><br><span class="line">	<span class="keyword">return</span> head; &#125;</span><br></pre></td></tr></table></figure>
+<p>然后就是插入节点的操作，跟单链表一样，可以去看我前面的文章，链接<a href="https://blog.csdn.net/qq_41835250/article/details/107568684" target="_blank" rel="noopener">https://blog.csdn.net/qq_41835250/article/details/107568684</a></p>
+<p>第三，由于单循环链表的特点，删除一个指定的节点时我们可以不需要头指针，而仅仅通过该 待删除节点的指针就可以回溯到他的前一个节点，进而实现删除操作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove_node</span><span class="params">(linklist <span class="keyword">delete</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	linklist tmp = <span class="keyword">delete</span>; </span><br><span class="line">	<span class="keyword">while</span>(tmp-&gt;next != <span class="keyword">delete</span>) <span class="comment">// 从 delete开始，绕一圈找到其前面的节点</span></span><br><span class="line">	&#123; </span><br><span class="line">		tmp = tmp-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	tmp-&gt;next = <span class="keyword">delete</span>-&gt;next; </span><br><span class="line">	<span class="keyword">delete</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第四，移动节点。 在单链表中，移动节点需要三个参数，因为移动的目的地可能在原始位置的前面，由于 没有头指针的情况下无法回溯回去，因此必须要链表的头指针来遍历。但是对于单循环链表<br>而言则不存在这个问题，链表中的任意一个节点，都可以从另一个任意节点出发找到，因此 移动节点不需要三个参数，请看代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">move_node</span><span class="params">(linklist p, linklist anchor)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(p == <span class="literal">NULL</span> || anchor == <span class="literal">NULL</span>) </span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">	remove_node(p); <span class="comment">// 先将要移动的节点从链表中剔除 </span></span><br><span class="line">	insert_node(anchor, p); <span class="comment">// 再插入指定的地方</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第五，查找节点。 同理，单循环链表的查找跟单链表的查找基本是一样的，只是在判断是否遍历完链表的 条件上有所差别：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">find_node</span><span class="params">(linklist mylist, <span class="keyword">int</span> data)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(is_empty(mylist)) </span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	linklist tmp;</span><br><span class="line">	<span class="keyword">for</span>(tmp=mylist-&gt;next; tmp!=mylist; tmp=tmp-&gt;next) </span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(data == tmp-&gt;data) </span><br><span class="line">			<span class="keyword">break</span>; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> tmp==mylist ? <span class="literal">NULL</span> : tmp; <span class="comment">// 如果遍历回到 mylist 则表示找不到</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="双向循环链表"><a href="#双向循环链表" class="headerlink" title="双向循环链表"></a>双向循环链表</h1><p>通过上面的内容，可以看出来单循环链表的缺点就是每一次遍历都需要从头开始，不能从任意位置来遍历，于是双向循环链表的出现就是来解决这个问题的。<br>第一，设计节点。 双向链表的节点当然需要两个指针，节点的设计如下：<br><img src="/2020/07/25/linux02/slianbiao.jpg" alt="双向循环链表示意图"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span> data;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">prev</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;listnode, *linklist;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意一下，：节点中的 prev 和 next 指针均是 struct node 型的指针，他们都是指向本结 构体类型的相邻节点的。<br>第二，初始化空链表。<br>因为一般情况下我们所使用的大都是带头结点的双向循环链表，所以我就直接使用带头结点的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">init_list</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	linklist mylist = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(listnode));</span><br><span class="line">	<span class="keyword">if</span>(mylist != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		mylist-&gt;prev = mylist-&gt;next = mylist;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> mylist;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第三，插入节点<br>由于双向循环链表的特征，所以可以有两种插入方式，头插法和尾插法，先来看看头插法的图示步骤：<br><img src="/2020/07/25/linux02/toucha.jpg" alt="头插法操作步骤"><br>第 1 步，将新节点的 prev 指针指向 anchor 节点：new-&gt;prev = anchor<br>第 2 步，将新将节点的 next指向 anchor 下一个节点：new-&gt;next = anchor-&gt;next<br>第 3 步，将节点 anchor 的 next 指针指向新节点 new：anchor-&gt;next = new<br>第 4 步，将 anchor 原来的下一个节点的 prev 指针指向 new 节点： new-&gt;next-&gt;prev = new<br>把它们链接起来就是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_next</span><span class="params">(linklist <span class="keyword">new</span>, linklist anchor)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">new</span> == <span class="literal">NULL</span> || anchor == <span class="literal">NULL</span>) </span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">new</span>-&gt;prev = anchor; <span class="comment">// 第①步 </span></span><br><span class="line">	<span class="keyword">new</span>-&gt;next = anchor-&gt;next; <span class="comment">// 第②步</span></span><br><span class="line">	</span><br><span class="line">	anchor-&gt;next = <span class="keyword">new</span>; <span class="comment">// 第③步 </span></span><br><span class="line">	<span class="keyword">new</span>-&gt;next-&gt;prev = <span class="keyword">new</span>; <span class="comment">// 第④步</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>尾插法也类似，不过是把节点插在头节点的后面<br>还是画个图示:<br><img src="/2020/07/25/linux02/weicha.jpg" alt="尾插法操作步骤"><br>步骤:<br>第 1 步，将新节点的 prev 指向 anchor 的前节点：new-&gt;prev = anchor-&gt;prev<br>第 2 步，将新节点的 next 指向 anchor：new-&gt;next = anchor<br>第 3 步，将 anchor 的前节点的 next 指向新节点：anchor-&gt;prev-&gt;next = new<br>第 4 步，将 anchor 的前驱指针指向 new：anchor-&gt;prev = new;<br>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_prev</span><span class="params">(linklist <span class="keyword">new</span>, linklist anchor)</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">new</span> == <span class="literal">NULL</span> || anchor == <span class="literal">NULL</span>) </span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">new</span>-&gt;prev = anchor-&gt;prev; </span><br><span class="line">	<span class="keyword">new</span>-&gt;next = anchor;</span><br><span class="line">	<span class="keyword">new</span>-&gt;prev-&gt;next = <span class="keyword">new</span>;</span><br><span class="line">	anchor-&gt;prev = <span class="keyword">new</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第四，删除节点。<br>删除一个节点的步骤很简单，只需要将其前趋节点指向其后续节点，将其后续节点指向其前驱节点即可，另外要注意，需将被删除节点的前后向指针置空，使其彻底从链表中脱离 开来，防止错误的访问。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove_node</span><span class="params">(linklist <span class="keyword">delete</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">delete</span> == <span class="literal">NULL</span>) </span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">delete</span>-&gt;prev-&gt;next = <span class="keyword">delete</span>-&gt;next;  <span class="keyword">delete</span>-&gt;next-&gt;prev = <span class="keyword">delete</span>-&gt;prev; </span><br><span class="line">	<span class="keyword">delete</span>-&gt;prev = <span class="literal">NULL</span>;  </span><br><span class="line">	<span class="keyword">delete</span>-&gt;next = <span class="literal">NULL</span>; <span class="comment">//这两行代码用来将要删除的节点彻底脱离</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第五，移动节点。<br>移动节点很好理解，就是一个删除一个移动，画个图就很好理解<br><img src="/2020/07/25/linux02/move.jpg" alt="移动节点"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">move_next</span><span class="params">(linklist p, linklist anchor)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	remove_node(p); <span class="comment">// 将要移动的节点从链表中移除</span></span><br><span class="line">	insert_next(p, anchor); <span class="comment">// 将节点插入锚点 anchor 的后面 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第六，查找节点。 节点的查找无非就是对链表进行遍历，从头开始找，找一圈找到为止。直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">find_node</span><span class="params">(<span class="keyword">int</span> data, linklist mylist)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(is_empty(mylist))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	linklist tmp = mylist-&gt;next;  <span class="comment">// 让 tmp从第一个节点开始</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(tmp != mylist)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(tmp-&gt;data == data)</span><br><span class="line">			<span class="keyword">return</span> tmp;</span><br><span class="line"></span><br><span class="line">		tmp=tmp-&gt;next; <span class="comment">// 不断地向后遍历，查找</span></span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果看到这里你都已经基本看明白了，那么你用双向循环链表写一个学生管理系统什么的已经没问题了，以前我也是学到这里也做过，如果需要欢迎私信。<br>写到这里突然想起来Linux里还有一个叫做内核链表的东西，下一篇更新一下内核链表。<br>每一个功能我都写成函数以便于调用，如有问题，欢迎指正。<br>感谢观看。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a  href="/2020/07/25/linux02/">C语言中单向循环链表于循环链表详解</a></p>
+        <p><span>文章作者:</span><a  href="/" title="访问 Cyan Mountain 的个人博客">Cyan Mountain</a></p>
+        <p><span>发布时间:</span>2020年07月25日 - 20时31分</p>
+        <p><span>最后更新:</span>2020年07月26日 - 10时32分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2020/07/25/linux02/" title="C语言中单向循环链表于循环链表详解">http://yoursite.com/2020/07/25/linux02/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2020/07/25/linux02/　　作者: Cyan Mountain" title=""></span>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" target="_blank" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a  href="/2020/07/15/linux01/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">C语言数据结构介绍</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#每日一句"><span class="toc-number">1.</span> <span class="toc-text">每日一句</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内容概要"><span class="toc-number"></span> <span class="toc-text">内容概要</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#单向循环链表"><span class="toc-number"></span> <span class="toc-text">单向循环链表</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#双向循环链表"><span class="toc-number"></span> <span class="toc-text">双向循环链表</span></a>
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <section class="changyan" id="comments">
+  <!--<div id="uyan_frame"></div>-->
+  <div id="SOHUCS"></div>
+  <script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js"></script>
+  <script type="text/javascript">
+    window.changyan.api.config({
+      appid: 'xxxx',
+      conf: 'xxxxxxxxx'
+    });
+  </script>
+</section>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a  href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a  href="/2020/07/15/linux01/" title="下一篇: C语言数据结构介绍">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/07/25/linux02/">C语言中单向循环链表于循环链表详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/15/linux01/">C语言数据结构介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/07/hexo01/">使用hexo播放音乐</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/07/start/">START：Linux基础笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/06/ceshi/">first Blog</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/06/monday/">monday</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/06/cyanmountain/">cyanmountain</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/06/hello-world/">Hello World</a></li></ul>
+    
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+    <script>
+        $(".post-list").addClass("toc-article");
+        // $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#toc, .switch-btn, .switch-area").toggle();
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+                $(".switch-btn, .switch-area").fadeToggle(300);
+            }
+        })
+    </script>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Cyan Mountain
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo &nbsp;&nbsp;</a><a href="https://github.com/maochunguang" target="_blank">Blog</a> by tommy
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >极客到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 1;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'xxxxx', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?xxxxxx";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

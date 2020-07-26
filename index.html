@@ -279,6 +279,95 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-linux02" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2020/07/25/linux02/" class="article-date">
+      <time datetime="2020-07-25T12:31:21.000Z" itemprop="datePublished">2020-07-25</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a  class="article-title" href="/2020/07/25/linux02/">C语言中单向循环链表于循环链表详解</a>
+    </h1>
+  
+
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h3 id="每日一句"><a href="#每日一句" class="headerlink" title="每日一句"></a>每日一句</h3><p>It’s gonna be ok.</p>
+<p>一切都会好的。</p>
+<h2 id="内容概要"><a href="#内容概要" class="headerlink" title="内容概要"></a>内容概要</h2><p>今天如约来更新一下有关于链表的操作。</p>
+<h1 id="单向循环链表"><a href="#单向循环链表" class="headerlink" title="单向循环链表"></a>单向循环链表</h1><p>首先来看看图示：<br><img src="/2020/07/25/linux02/dlianbiao.jpg" alt="单项循环链表"><br>图展示的是一个单向循环链表，他跟以上的单向链表对比只是多了一个指向头结点的 指针，因此，他们的算法几乎是一样的。<br>第一，设计节点。 单向循环链表的节点跟单向链表完全一致。</p>
+<p>第二，初始化空链表。 跟单向链表类似，我们既可以初始化一个带有头结点的空循环链表，也可以不要头结点：<br><img src="/2020/07/25/linux02/jiedian.jpg" alt="单项循环链表"><br>这边把两个步骤放在一起了</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">init_list</span><span class="params">(<span class="keyword">void</span>)</span> <span class="comment">// 带有头结点的单循环链表 </span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	linklist head = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(listnode)); </span><br><span class="line">	head-&gt;next = head;</span><br><span class="line">	<span class="keyword">return</span> head; &#125;</span><br></pre></td></tr></table></figure>
+<p>然后就是插入节点的操作，跟单链表一样，可以去看我前面的文章，链接<a href="https://blog.csdn.net/qq_41835250/article/details/107568684" target="_blank" rel="noopener">https://blog.csdn.net/qq_41835250/article/details/107568684</a></p>
+<p>第三，由于单循环链表的特点，删除一个指定的节点时我们可以不需要头指针，而仅仅通过该 待删除节点的指针就可以回溯到他的前一个节点，进而实现删除操作：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove_node</span><span class="params">(linklist <span class="keyword">delete</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	linklist tmp = <span class="keyword">delete</span>; </span><br><span class="line">	<span class="keyword">while</span>(tmp-&gt;next != <span class="keyword">delete</span>) <span class="comment">// 从 delete开始，绕一圈找到其前面的节点</span></span><br><span class="line">	&#123; </span><br><span class="line">		tmp = tmp-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	tmp-&gt;next = <span class="keyword">delete</span>-&gt;next; </span><br><span class="line">	<span class="keyword">delete</span>-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第四，移动节点。 在单链表中，移动节点需要三个参数，因为移动的目的地可能在原始位置的前面，由于 没有头指针的情况下无法回溯回去，因此必须要链表的头指针来遍历。但是对于单循环链表<br>而言则不存在这个问题，链表中的任意一个节点，都可以从另一个任意节点出发找到，因此 移动节点不需要三个参数，请看代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">move_node</span><span class="params">(linklist p, linklist anchor)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(p == <span class="literal">NULL</span> || anchor == <span class="literal">NULL</span>) </span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">	remove_node(p); <span class="comment">// 先将要移动的节点从链表中剔除 </span></span><br><span class="line">	insert_node(anchor, p); <span class="comment">// 再插入指定的地方</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第五，查找节点。 同理，单循环链表的查找跟单链表的查找基本是一样的，只是在判断是否遍历完链表的 条件上有所差别：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">find_node</span><span class="params">(linklist mylist, <span class="keyword">int</span> data)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(is_empty(mylist)) </span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	linklist tmp;</span><br><span class="line">	<span class="keyword">for</span>(tmp=mylist-&gt;next; tmp!=mylist; tmp=tmp-&gt;next) </span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(data == tmp-&gt;data) </span><br><span class="line">			<span class="keyword">break</span>; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> tmp==mylist ? <span class="literal">NULL</span> : tmp; <span class="comment">// 如果遍历回到 mylist 则表示找不到</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="双向循环链表"><a href="#双向循环链表" class="headerlink" title="双向循环链表"></a>双向循环链表</h1><p>通过上面的内容，可以看出来单循环链表的缺点就是每一次遍历都需要从头开始，不能从任意位置来遍历，于是双向循环链表的出现就是来解决这个问题的。<br>第一，设计节点。 双向链表的节点当然需要两个指针，节点的设计如下：<br><img src="/2020/07/25/linux02/slianbiao.jpg" alt="双向循环链表示意图"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">int</span> data;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">prev</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">node</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;listnode, *linklist;</span><br></pre></td></tr></table></figure>
+<p>这里需要注意一下，：节点中的 prev 和 next 指针均是 struct node 型的指针，他们都是指向本结 构体类型的相邻节点的。<br>第二，初始化空链表。<br>因为一般情况下我们所使用的大都是带头结点的双向循环链表，所以我就直接使用带头结点的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">init_list</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	linklist mylist = <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(listnode));</span><br><span class="line">	<span class="keyword">if</span>(mylist != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		mylist-&gt;prev = mylist-&gt;next = mylist;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> mylist;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第三，插入节点<br>由于双向循环链表的特征，所以可以有两种插入方式，头插法和尾插法，先来看看头插法的图示步骤：<br><img src="/2020/07/25/linux02/toucha.jpg" alt="头插法操作步骤"><br>第 1 步，将新节点的 prev 指针指向 anchor 节点：new-&gt;prev = anchor<br>第 2 步，将新将节点的 next指向 anchor 下一个节点：new-&gt;next = anchor-&gt;next<br>第 3 步，将节点 anchor 的 next 指针指向新节点 new：anchor-&gt;next = new<br>第 4 步，将 anchor 原来的下一个节点的 prev 指针指向 new 节点： new-&gt;next-&gt;prev = new<br>把它们链接起来就是</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_next</span><span class="params">(linklist <span class="keyword">new</span>, linklist anchor)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">new</span> == <span class="literal">NULL</span> || anchor == <span class="literal">NULL</span>) </span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">new</span>-&gt;prev = anchor; <span class="comment">// 第①步 </span></span><br><span class="line">	<span class="keyword">new</span>-&gt;next = anchor-&gt;next; <span class="comment">// 第②步</span></span><br><span class="line">	</span><br><span class="line">	anchor-&gt;next = <span class="keyword">new</span>; <span class="comment">// 第③步 </span></span><br><span class="line">	<span class="keyword">new</span>-&gt;next-&gt;prev = <span class="keyword">new</span>; <span class="comment">// 第④步</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>尾插法也类似，不过是把节点插在头节点的后面<br>还是画个图示:<br><img src="/2020/07/25/linux02/weicha.jpg" alt="尾插法操作步骤"><br>步骤:<br>第 1 步，将新节点的 prev 指向 anchor 的前节点：new-&gt;prev = anchor-&gt;prev<br>第 2 步，将新节点的 next 指向 anchor：new-&gt;next = anchor<br>第 3 步，将 anchor 的前节点的 next 指向新节点：anchor-&gt;prev-&gt;next = new<br>第 4 步，将 anchor 的前驱指针指向 new：anchor-&gt;prev = new;<br>代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert_prev</span><span class="params">(linklist <span class="keyword">new</span>, linklist anchor)</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">new</span> == <span class="literal">NULL</span> || anchor == <span class="literal">NULL</span>) </span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">new</span>-&gt;prev = anchor-&gt;prev; </span><br><span class="line">	<span class="keyword">new</span>-&gt;next = anchor;</span><br><span class="line">	<span class="keyword">new</span>-&gt;prev-&gt;next = <span class="keyword">new</span>;</span><br><span class="line">	anchor-&gt;prev = <span class="keyword">new</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第四，删除节点。<br>删除一个节点的步骤很简单，只需要将其前趋节点指向其后续节点，将其后续节点指向其前驱节点即可，另外要注意，需将被删除节点的前后向指针置空，使其彻底从链表中脱离 开来，防止错误的访问。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">remove_node</span><span class="params">(linklist <span class="keyword">delete</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">delete</span> == <span class="literal">NULL</span>) </span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	<span class="keyword">delete</span>-&gt;prev-&gt;next = <span class="keyword">delete</span>-&gt;next;  <span class="keyword">delete</span>-&gt;next-&gt;prev = <span class="keyword">delete</span>-&gt;prev; </span><br><span class="line">	<span class="keyword">delete</span>-&gt;prev = <span class="literal">NULL</span>;  </span><br><span class="line">	<span class="keyword">delete</span>-&gt;next = <span class="literal">NULL</span>; <span class="comment">//这两行代码用来将要删除的节点彻底脱离</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第五，移动节点。<br>移动节点很好理解，就是一个删除一个移动，画个图就很好理解<br><img src="/2020/07/25/linux02/move.jpg" alt="移动节点"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">move_next</span><span class="params">(linklist p, linklist anchor)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">	remove_node(p); <span class="comment">// 将要移动的节点从链表中移除</span></span><br><span class="line">	insert_next(p, anchor); <span class="comment">// 将节点插入锚点 anchor 的后面 </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第六，查找节点。 节点的查找无非就是对链表进行遍历，从头开始找，找一圈找到为止。直接上代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">linklist <span class="title">find_node</span><span class="params">(<span class="keyword">int</span> data, linklist mylist)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(is_empty(mylist))</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	linklist tmp = mylist-&gt;next;  <span class="comment">// 让 tmp从第一个节点开始</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span>(tmp != mylist)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(tmp-&gt;data == data)</span><br><span class="line">			<span class="keyword">return</span> tmp;</span><br><span class="line"></span><br><span class="line">		tmp=tmp-&gt;next; <span class="comment">// 不断地向后遍历，查找</span></span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果看到这里你都已经基本看明白了，那么你用双向循环链表写一个学生管理系统什么的已经没问题了，以前我也是学到这里也做过，如果需要欢迎私信。<br>写到这里突然想起来Linux里还有一个叫做内核链表的东西，下一篇更新一下内核链表。<br>每一个功能我都写成函数以便于调用，如有问题，欢迎指正。<br>感谢观看。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+    </div>
+
+
+      
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+
+  
     <article id="post-linux01" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
