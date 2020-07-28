@@ -279,6 +279,128 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-linux03" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2020/07/27/linux03/" class="article-date">
+      <time datetime="2020-07-27T12:16:57.000Z" itemprop="datePublished">2020-07-27</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a  class="article-title" href="/2020/07/27/linux03/">C语言中笔试必须掌握的四大排序算法</a>
+    </h1>
+  
+
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="每日一句"><a href="#每日一句" class="headerlink" title="每日一句"></a>每日一句</h2><p>Take care of yourself.<br>照顾好你你自己</p>
+<h2 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h2><p>昨天写一道关于排序的题，就顺势复习一下写一篇关于排序的博客好了。</p>
+<p>C语言中排序有很多种，但是笔试题中最多的还是四种排序算法，也就是，冒泡排序，插入排序，快速排序和选择排序，还有很多像是希尔排序堆排序等，都没有在笔试题中看到这里就不介绍了。</p>
+<h2 id="排序的时间复杂度"><a href="#排序的时间复杂度" class="headerlink" title="排序的时间复杂度"></a>排序的时间复杂度</h2><table>
+<thead>
+<tr>
+<th>排序法</th>
+<th align="center">时间复杂度</th>
+<th align="right">最大时间复杂度</th>
+<th align="right">是否稳定</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>冒泡</td>
+<td align="center">O(n^2)</td>
+<td align="right">O(n^2)</td>
+<td align="right">稳定</td>
+</tr>
+<tr>
+<td>选择</td>
+<td align="center">O(n^2)</td>
+<td align="right">O(n^2)</td>
+<td align="right">不稳定</td>
+</tr>
+<tr>
+<td>插入</td>
+<td align="center">O(n^2)</td>
+<td align="right">O(n^2)</td>
+<td align="right">稳定</td>
+</tr>
+<tr>
+<td>快排</td>
+<td align="center">O(nlogn)</td>
+<td align="right">O(n^2)</td>
+<td align="right">不稳定</td>
+</tr>
+</tbody></table>
+<p>一般两层循环的时间复杂度就是O(n^2),但是为什么快排有个最大时间复杂度呢，看到快速排序你就会知道。</p>
+<h2 id="冒泡排序（Bubble-sort）"><a href="#冒泡排序（Bubble-sort）" class="headerlink" title="冒泡排序（Bubble sort）"></a>冒泡排序（Bubble sort）</h2><p>大名鼎鼎的冒泡排序必须放在第一个介绍，它是很多公司笔试题中都会出现的一道题。首先来看看它的排序过程。<br>图片是通过 <a href="https://visualgo.net/en" target="_blank" rel="noopener">https://visualgo.net/en</a> 模拟出来的，大家兴趣可以去看一下，里面有很多常用的算法图解，很好用<br><img src="/2020/07/27/linux03/maopao.gif" alt="冒泡排序示意"></p>
+<p>它的原理是：比较相邻的元素，如果前面一个比后面一个大（小），那么就交换两个数的位置，然后一直往后（前）比较，每次循环都会得到一个最大（小）的数。<br>知道了原理我们再写就很好写了。<br>为了代码看起来简洁，我用一个交换函数来交换两个数和一个计算长度的函数来计算长度</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void swapNum(int *a, int *b) &#x2F;&#x2F;交换两个数</span><br><span class="line">&#123;</span><br><span class="line">	int tmp;</span><br><span class="line">	tmp &#x3D; *a;</span><br><span class="line">	*a &#x3D; *b;</span><br><span class="line">	*b &#x3D; tmp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int arrlen(int *arr)  &#x2F;&#x2F;计算数组长度</span><br><span class="line">&#123;</span><br><span class="line">	int i &#x3D; 0;</span><br><span class="line">	while(*(arr+i) !&#x3D; -1)</span><br><span class="line">	&#123;</span><br><span class="line">		i++;</span><br><span class="line">	&#125;</span><br><span class="line">	return i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>冒泡排序算法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void bubbleSort(int *arr)</span><br><span class="line">&#123;</span><br><span class="line">    int i, j;</span><br><span class="line">	</span><br><span class="line">    for(i &#x3D; 0; i &lt; arrlen(arr)-1; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        for(j &#x3D; 1; j &lt; arrlen(arr); j++)</span><br><span class="line">        &#123;</span><br><span class="line">            if(arr[j] &lt; arr[j - 1])</span><br><span class="line">            &#123;</span><br><span class="line">				swapNum(&amp;arr[j],&amp;arr[j-1]);</span><br><span class="line">            &#125;</span><br><span class="line">			&#x2F;&#x2F;printnum(arr);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可能看起来有点复杂，其实只是这两个函数带来了代码量，个人习惯，也可以直接在函数参数里传一个数组长度来直接计算，这样写的好处是对动态数组的处理。<br>printnum()函数就是一个遍历打印，加上就可以看到它的冒泡过程，很形象。</p>
+<h2 id="选择排序（Selection-sort）"><a href="#选择排序（Selection-sort）" class="headerlink" title="选择排序（Selection sort）"></a>选择排序（Selection sort）</h2><p>还是来看看图解：</p>
+<p><img src="/2020/07/27/linux03/xuanze.gif" alt="选择排序动图"></p>
+<p>算法原理：在未排序的数列中找到最大（小）的数，放到已排序的数列末尾。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">void selectionSort(int *arr)</span><br><span class="line">&#123;</span><br><span class="line">	int min;</span><br><span class="line">	int i &#x3D; 0, j;</span><br><span class="line">	for(; i &lt; arrlen(arr)-1; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		min &#x3D; i;</span><br><span class="line">		for(j &#x3D; i+1; j &lt; arrlen(arr); j++)</span><br><span class="line">		&#123;</span><br><span class="line">			if(arr[j] &lt; arr[min])</span><br><span class="line">				min &#x3D; j;</span><br><span class="line">		&#125;</span><br><span class="line">		swapNum(&amp;arr[i],&amp;arr[min]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="插入排序（Insertion-sort）"><a href="#插入排序（Insertion-sort）" class="headerlink" title="插入排序（Insertion sort）"></a>插入排序（Insertion sort）</h2><p>动图：<br><img src="/2020/07/27/linux03/charu.gif" alt="插入排序动图"></p>
+<p>原理：默认第一个数已排序，从第二个数开始，将要排序的数依次跟前面的数比较，如果要排序的数比前面的数要小（大），就将前面的数往后移（或交换），直到遇到大于或等于要排序的数，就将这个数插入即可。</p>
+<p>看代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">void insertionSort(int *arr)</span><br><span class="line">&#123;</span><br><span class="line">	int n,index;</span><br><span class="line">	int i &#x3D; 1;</span><br><span class="line">	for(; i &lt; arrlen(arr); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		n &#x3D; i-1;</span><br><span class="line">		index &#x3D; arr[i];</span><br><span class="line">		while(n &gt; 0 &amp;&amp; arr[n]&gt;index)</span><br><span class="line">		&#123;</span><br><span class="line">			arr[n + 1] &#x3D; arr[n];</span><br><span class="line">			n--;</span><br><span class="line">		&#125;</span><br><span class="line">		arr[n+1] &#x3D; index;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="快速排序（Quick-sort）"><a href="#快速排序（Quick-sort）" class="headerlink" title="快速排序（Quick sort）"></a>快速排序（Quick sort）</h2><p>动图<br><img src="/2020/07/27/linux03/kuaisu.gif" alt="快速排序动图"></p>
+<p>原理：快排对于数据量大的时候是比较好用的，它是将第一个数作为基准值，将比这个基准值小的数放在它的左边，将比这个基准值大的数放在它的右边，形成两个分区，再对这两个分区重复上述操作，直到各分区只有一个数为止。<br><img src="/2020/07/27/linux03/tupian.jpg" alt="tupian"><br>还有一种方法是进入函数时就以中间那个值为基准值，然后将左边和右边分为两块分别递归，但实际操作比将第一个数作为基准值更复杂。<br>代码：（以第一个数为基准值）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">void quickSort2(int *arr, int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">	int mid &#x3D; left , i &#x3D; left+1, index &#x3D; mid + 1;</span><br><span class="line">	if(right &lt;&#x3D; left) &#x2F;&#x2F; 递归结束条件</span><br><span class="line">		return ;</span><br><span class="line">	while(i &lt; right) &#x2F;&#x2F;循环遍历，分组数据。</span><br><span class="line">	&#123;</span><br><span class="line">		if(arr[i] &lt; arr[mid])</span><br><span class="line">		&#123;</span><br><span class="line">			swap(&amp;arr[i],&amp;arr[index]);</span><br><span class="line">			index ++;</span><br><span class="line">		&#125;		</span><br><span class="line">		i++;</span><br><span class="line">	&#125;</span><br><span class="line">	index -&#x3D; 1;</span><br><span class="line">	swapNum(&amp;arr[mid],&amp;arr[index]);</span><br><span class="line">	quickSort2(arr,left,index); </span><br><span class="line">	quickSort2(arr,index+1,right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以中间数值数为基准值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">void quickSort(int *arr, int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">	int mid &#x3D; left + (right-left)&#x2F;2, i &#x3D; left;</span><br><span class="line">	int index &#x3D; 0;</span><br><span class="line">	if(right &lt;&#x3D; left)</span><br><span class="line">		return ;</span><br><span class="line">	</span><br><span class="line">	int tmp,temp;</span><br><span class="line">	temp &#x3D; arr[mid];</span><br><span class="line">	while(i &lt;&#x3D; right)</span><br><span class="line">	&#123;</span><br><span class="line">		if(arr[i] &lt; temp)</span><br><span class="line">		&#123;</span><br><span class="line">			swapNum(&amp;arr[i],&amp;arr[left+index]);</span><br><span class="line">			index ++;</span><br><span class="line">		&#125;</span><br><span class="line">		if(arr[i] &#x3D;&#x3D; temp)</span><br><span class="line">		&#123;</span><br><span class="line">			tmp &#x3D; i;</span><br><span class="line">		&#125;		</span><br><span class="line">		i++;</span><br><span class="line">	&#125;</span><br><span class="line">	swapNum(&amp;arr[tmp],&amp;arr[left+index]);</span><br><span class="line">	quickSort(arr,left,left+index);</span><br><span class="line">	quickSort(arr,left+index+1,right);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种排序法用到了递归，所以对递归也有要求，如果对递归又兴趣的小伙伴可以去搜索汉诺塔问题，最经典的递归算法。<br>最后献上我的主函数，可动态申请空间</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">void printnum(int *arr)</span><br><span class="line">&#123;</span><br><span class="line">	int i &#x3D; 0;</span><br><span class="line">	for(;i &lt;arrlen(arr); i++)</span><br><span class="line">	&#123;</span><br><span class="line">		printf(&quot;%d &quot;, arr[i]);</span><br><span class="line">	&#125;</span><br><span class="line">	printf(&quot;\n&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">	int *a &#x3D; malloc(sizeof(int)*10);</span><br><span class="line">	int i &#x3D; 0;</span><br><span class="line">	while(~scanf(&quot;%d&quot;, a+i))</span><br><span class="line">	&#123;</span><br><span class="line">		if(*(a+i) &#x3D;&#x3D; -1)</span><br><span class="line">			break;</span><br><span class="line">		i++;</span><br><span class="line">	&#125; </span><br><span class="line">	&#x2F;&#x2F;bubbleSort(a);</span><br><span class="line">	&#x2F;&#x2F;selectSort(a);</span><br><span class="line">	&#x2F;&#x2F;insertionSort(a);</span><br><span class="line">	quickSort2(a,0,arrlen(a)-1);</span><br><span class="line">	printnum(a);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>感谢观看，如有疑问，欢迎指出。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+    </div>
+
+
+      
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+
+  
     <article id="post-linux02" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
